@@ -1,0 +1,21 @@
+{
+  "user": {
+    "userName":"Eddy Luis",
+    "userEmail": "Eddy_Luis@appl.com",
+    "title": "Mr.",
+    "password": "abcd998866@",
+    "day": "5",
+    "month": "3",
+    "year": "2014",
+    "firstName": "Eddy",
+    "lastName": "Luis",
+    "company": "Apple",
+    "address1": "US",
+    "address2": "US",
+    "country": "United States",
+    "state": "US",
+    "city": "New york",
+    "zipcode": "1234567",
+    "mobileNumber": "759923448"
+  }
+}
