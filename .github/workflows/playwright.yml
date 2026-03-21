@@ -13,7 +13,7 @@ jobs:
 
     # Run all steps inside the Playwright Docker container
     container:
-      image: mcr.microsoft.com/playwright:v1.43.0-jammy
+      image: mcr.microsoft.com/playwright:v1.55.0-jammy
 
     steps:
       - name: Checkout repository
