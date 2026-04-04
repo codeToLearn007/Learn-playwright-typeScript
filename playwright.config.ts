@@ -26,9 +26,12 @@ export default defineConfig({
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     headless: true,  // ← make sure this is true
-    viewport: { width: 1280, height: 720 },
     ignoreHTTPSErrors: true,
     trace: 'on-first-retry',
+    launchOptions: {
+      args: ['--start-maximized'],
+    },
+    viewport: null
   },
 
   /* Configure projects for major browsers */

@@ -1,66 +1,61 @@
 import { BasePage } from "./BasePage";
-import { expect, Page } from "@playwright/test";
-import userData from "../test-data/user.json";
-import { assert } from "console";
+import { expect, Page, Locator } from "@playwright/test";
 
 export class LoginPage extends BasePage {
 
-    private loginButton;
-    private signUpUserName;
-    private signUpEmail;
-    private signUpButton;
-    private consentButton;
-
-    private accountCreatedMessage;
-    private continueButton;
-    private loginUserEmail;
-    private loginPassword;
-    private loginButtonFinal;
+    private readonly consentBtn = this.page.getByRole('button', { name: 'Consent' });
+    private readonly signupLoginLink = this.page.getByRole("link", { name: "Signup / Login" });
+    
+    private readonly signUpNameInput = this.page.locator('[data-qa="signup-name"]');
+    private readonly signUpEmailInput = this.page.locator('[data-qa="signup-email"]');
+    private readonly signUpBtn = this.page.locator('[data-qa="signup-button"]');
+    
+    private readonly loginEmailInput = this.page.locator('[data-qa="login-email"]');
+    private readonly loginPasswordInput = this.page.locator('[data-qa="login-password"]');
+    private readonly loginBtn = this.page.locator('[data-qa="login-button"]');
+    
+    private readonly accountCreatedMsg = this.page.getByText('Account Created!');
+    private readonly accountDeletedMsg = this.page.getByText('ACCOUNT DELETED!');
+    private readonly continueBtn = this.page.getByRole('link', { name: 'Continue' });
+    private readonly deleteAccountLink = this.page.getByRole('link', { name: 'Delete Account' });
+    private readonly logoutLink = this.page.getByRole('link', { name: 'Logout' });
 
     constructor(page: Page) {
         super(page);
-        this.loginButton = this.page.getByRole("link", { name: "Signup / Login" });
-        this.signUpUserName = this.page.locator('[data-qa="signup-name"]');
-        this.signUpEmail = this.page.locator('[data-qa="signup-email"]');
-        this.signUpButton = this.page.locator('[data-qa="signup-button"]');
-        this.consentButton = this.page.getByRole('button', { name: 'Consent' });
-
-        this.accountCreatedMessage = this.page.getByText('Account Created!')
-        this.continueButton = this.page.getByRole('link', { name: 'Continue' });
-        this.loginUserEmail = this.page.locator('[data-qa="login-email"]');
-        this.loginPassword = this.page.locator('[data-qa="login-password"]');
-        this.loginButtonFinal = this.page.locator('[data-qa="login-button"]');
-  
     }
 
-    public async clickLogin() {
-        await this.consentButton.click();
-        await this.loginButton.click();
+    public async goToLoginSection() {
+       
+        if (await this.consentBtn.isVisible()) {
+            await this.consentBtn.click();
+        }
+        await this.signupLoginLink.click();
     }
 
-    public async deleteUser() {
-        await this.clickLogin();
-        await this.loginUserEmail.fill(userData.user.userEmail);
-        await this.loginPassword.fill(userData.user.password);
-        await this.loginButtonFinal.click();
-        await this.page.getByRole('link', { name: 'Delete Account' }).click();
-        assert(await this.page.getByText('ACCOUNT DELETED!').isVisible(), "Account deletion message is not visible");
-        await this.page.getByRole('link', { name: 'Continue' }).click();
+    public async login(email: string, password: string) {
+        await this.loginEmailInput.fill(email);
+        await this.loginPasswordInput.fill(password);
+        await this.loginBtn.click();
     }
 
     public async userSignUp(userName: string, signUpEmail: string) {
-        await this.signUpUserName.fill(userName);
-        await this.signUpEmail.fill(signUpEmail);
-        await this.signUpButton.click();
+        await this.signUpNameInput.fill(userName);
+        await this.signUpEmailInput.fill(signUpEmail);
+        await this.signUpBtn.click();
     }
-    
+
     public async verifyAccountCreated() {
-         assert(await this.accountCreatedMessage.isVisible(), "Account Created message is not visible");
-         await this.continueButton.click();
+        await expect(this.accountCreatedMsg).toBeVisible();
+        await this.continueBtn.click();
     }
 
     public async logoutUser() {
-        await this.page.getByRole('link', { name: 'Logout' }).click();
+        await this.logoutLink.click();
     }
 
+    public async deleteUser() {
+        await this.deleteAccountLink.click();
+        await expect(this.accountDeletedMsg).toBeVisible();
+        await this.continueBtn.click();
+    }
 }

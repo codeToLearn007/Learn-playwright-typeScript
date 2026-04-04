@@ -1,20 +1,27 @@
-
-import {test} from "../fixtures/fixture";
+import { test } from "../fixtures/fixture";
 import userData from "../test-data/user.json";
+import { UserRegistrationData } from "../pages/RegistrationPage";
 
-test("Register User Test", async ({ loginPage, basePage, registrationPage }) => {
-    const user = userData.user;
-    await basePage.navigateTo("https://automationexercise.com/");
-    await loginPage.clickLogin();
+// Cast the nested 'user' object from your JSON to your Interface
+const user = userData.user as UserRegistrationData;
 
-    await loginPage.userSignUp(user.userName, user.userEmail);
-    await registrationPage.enterAccountInformation(user);   
-    await loginPage.verifyAccountCreated();  
-    await loginPage.logoutUser();
+test.describe("User Management Flow", () => {
     
-});
+    test.beforeEach(async ({ basePage }) => {
+        await basePage.navigateTo("https://automationexercise.com/");
+    });
 
-test("Delete user", async ({ loginPage, basePage }) => {
-    await basePage.navigateTo("https://automationexercise.com/");
-    await loginPage.deleteUser();
+    test("Register a new user successfully", async ({ loginPage, registrationPage }) => {
+        await loginPage.goToLoginSection();
+        await loginPage.userSignUp(user.userName, user.userEmail)
+        await registrationPage.registerUser(user);   
+        await loginPage.verifyAccountCreated();  
+        await loginPage.logoutUser();
+    });
+
+    test("Delete an existing user", async ({ loginPage }) => {
+        await loginPage.goToLoginSection();
+        await loginPage.login(user.userEmail, user.password);
+        await loginPage.deleteUser();
+    });
 });
